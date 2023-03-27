@@ -3,11 +3,12 @@ package myid.shizuka.mergepdf;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-
+import android.Manifest;
 import android.app.Activity;
 import android.content.ClipData;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -28,6 +29,9 @@ import android.content.Context;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import android.content.pm.PackageManager;
+import androidx.core.content.ContextCompat;
+import androidx.core.app.ActivityCompat;
 
 
 public class MainActivity extends AppCompatActivity {
