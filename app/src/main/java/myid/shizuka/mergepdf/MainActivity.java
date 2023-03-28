@@ -42,7 +42,7 @@ import androidx.core.app.ActivityCompat;
 public class MainActivity extends AppCompatActivity {
     private WebView web;
     private ProgressBar progressBar;
-    String webUrl = "https://pdf.shizuka.my.id/";
+    final String webUrl = "https://pdf.shizuka.my.id/";
     private SwipeRefreshLayout swipeRefreshLayout;
     private static String file_type     = "*/*";
     private String cam_file_data = null;
@@ -72,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
         mywebsettings.setJavaScriptEnabled(true);
 
         web.setWebViewClient(new WebViewClient());
-
+        
         //improve webview performance
         web.getSettings().setLoadsImagesAutomatically(true);
         web.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
@@ -108,7 +108,7 @@ public class MainActivity extends AppCompatActivity {
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
                 if(file_permission() && Build.VERSION.SDK_INT >= 21) {
                     file_path = filePathCallback;
-                    Intent takePictureIntent = null;
+                        Intent takePictureIntent = null;
                     Intent takeVideoIntent = null;
 
                     boolean includeVideo = false;
