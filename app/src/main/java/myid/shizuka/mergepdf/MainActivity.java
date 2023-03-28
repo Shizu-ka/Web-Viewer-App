@@ -71,8 +71,8 @@ public class MainActivity extends AppCompatActivity {
         WebSettings mywebsettings = web.getSettings();
         mywebsettings.setJavaScriptEnabled(true);
 
-        web.setWebViewClient(new WebViewClient());
-        
+        web.setWebViewClient(new MyWebViewClient());
+
         //improve webview performance
         web.getSettings().setLoadsImagesAutomatically(true);
         web.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
