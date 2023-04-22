@@ -50,7 +50,7 @@ public class MainActivity extends AppCompatActivity {
     private ProgressBar progressBar;
     final String webUrl = "https://pdf.shizuka.my.id/";
     private SwipeRefreshLayout swipeRefreshLayout;
-    private static String file_type     = "*/*";
+    private static String file_type = "*/*";
     private String cam_file_data = null;
     private ValueCallback<Uri> file_data;
     private ValueCallback<Uri[]> file_path;
@@ -63,7 +63,6 @@ public class MainActivity extends AppCompatActivity {
     // the same for Android 5.0 methods only
     private ValueCallback<Uri[]> mFilePathCallback;
     private String mCameraPhotoPath;
-
 
 
     @Override
@@ -110,11 +109,12 @@ public class MainActivity extends AppCompatActivity {
 
 
             }
+
             /*-- handling input[type="file"] requests for android API 21+ --*/
             public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
-                if(file_permission() && Build.VERSION.SDK_INT >= 21) {
+                if (file_permission() && Build.VERSION.SDK_INT >= 21) {
                     file_path = filePathCallback;
-                        Intent takePictureIntent = null;
+                    Intent takePictureIntent = null;
                     Intent takeVideoIntent = null;
 
                     boolean includeVideo = false;
@@ -218,7 +218,8 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
-        swipeRefreshLayout = (SwipeRefreshLayout)findViewById(R.id.swipe);
+
+        swipeRefreshLayout = (SwipeRefreshLayout) findViewById(R.id.swipe);
 
         swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
@@ -230,7 +231,7 @@ public class MainActivity extends AppCompatActivity {
                         swipeRefreshLayout.setRefreshing(false);
                         web.reload();
                     }
-                },2000);
+                }, 2000);
             }
         });
 
@@ -244,47 +245,41 @@ public class MainActivity extends AppCompatActivity {
         );
 
 
-        if(Build.VERSION.SDK_INT>= Build.VERSION_CODES.M){
-            if(checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_DENIED) {
 
-                Log.d("permission","permission denied to WRITE_EXTERNAL_STORAGE - requesting it");
+                Log.d("permission", "permission denied to WRITE_EXTERNAL_STORAGE - requesting it");
                 String[] permissions = {Manifest.permission.WRITE_EXTERNAL_STORAGE};
-                requestPermissions(permissions,1);
+                requestPermissions(permissions, 1);
             }
-
-
         }
-
+        web.getSettings().setJavaScriptEnabled(true);
         web.setDownloadListener(new DownloadListener() {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
-
-                Uri parse = Uri.parse(url);
-                DownloadManager.Request request = new DownloadManager.Request(parse);
-                request.setMimeType(mimeType);
-                String cookies = CookieManager.getInstance().getCookie(url);
-                request.addRequestHeader("cookie",cookies);
-                request.addRequestHeader("User-Agent",userAgent);
-                request.setDescription("Downloading file....");
-                request.setTitle(URLUtil.guessFileName(url,contentDisposition,mimeType));
-                request.allowScanningByMediaScanner();
-                request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-                request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS,URLUtil.guessFileName(url, contentDisposition, mimeType));
-                DownloadManager dm = (DownloadManager) getSystemService(DOWNLOAD_SERVICE);
-                dm.enqueue(request);
-                Toast.makeText(getApplicationContext(),"Downloading File",Toast.LENGTH_SHORT).show();
-
-
+                web.loadUrl(JavaScriptInterface.getBase64StringFromBlobUrl(url));
             }
         });
+        web.getSettings().setAppCachePath(this.getApplicationContext().getCacheDir().getAbsolutePath());
+        web.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+        web.getSettings().setDatabaseEnabled(true);
+        web.getSettings().setDomStorageEnabled(true);
+        web.getSettings().setUseWideViewPort(true);
+        web.getSettings().setLoadWithOverviewMode(true);
+        web.addJavascriptInterface(new JavaScriptInterface(web.getContext()), "Android");
+        web.getSettings().setPluginState(WebSettings.PluginState.ON);
 
 
 
     }
+    private void browserSettings() {
+
+    }
+
     @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent intent){
+    protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
-        if(Build.VERSION.SDK_INT >= 21){
+        if (Build.VERSION.SDK_INT >= 21) {
             Uri[] results = null;
 
             /*-- if file request cancelled; exited camera. we need to send null value to make future attempts workable --*/
@@ -294,8 +289,8 @@ public class MainActivity extends AppCompatActivity {
             }
 
             /*-- continue if response is positive --*/
-            if(resultCode== Activity.RESULT_OK){
-                if(null == file_path){
+            if (resultCode == Activity.RESULT_OK) {
+                if (null == file_path) {
                     return;
                 }
                 ClipData clipData;
@@ -304,13 +299,13 @@ public class MainActivity extends AppCompatActivity {
                 try {
                     clipData = intent.getClipData();
                     stringData = intent.getDataString();
-                }catch (Exception e){
+                } catch (Exception e) {
                     clipData = null;
                     stringData = null;
                 }
                 if (clipData == null && stringData == null && cam_file_data != null) {
                     results = new Uri[]{Uri.parse(cam_file_data)};
-                }else{
+                } else {
                     if (clipData != null) {
                         final int numSelectedFiles = clipData.getItemCount();
                         results = new Uri[numSelectedFiles];
@@ -323,7 +318,8 @@ public class MainActivity extends AppCompatActivity {
                             ByteArrayOutputStream bytes = new ByteArrayOutputStream();
                             cam_photo.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
                             stringData = MediaStore.Images.Media.insertImage(this.getContentResolver(), cam_photo, null, null);
-                        }catch (Exception ignored){}
+                        } catch (Exception ignored) {
+                        }
 
                         results = new Uri[]{Uri.parse(stringData)};
                     }
@@ -332,9 +328,9 @@ public class MainActivity extends AppCompatActivity {
 
             file_path.onReceiveValue(results);
             file_path = null;
-        }else{
-            if(requestCode == file_req_code){
-                if(null == file_data) return;
+        } else {
+            if (requestCode == file_req_code) {
+                if (null == file_data) return;
                 Uri result = intent == null || resultCode != RESULT_OK ? null : intent.getData();
                 file_data.onReceiveValue(result);
                 file_data = null;
@@ -342,31 +338,35 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+
+
     @Override
-    public void onConfigurationChanged(Configuration newConfig){
+    public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
     }
 
-    public boolean file_permission(){
-        if(Build.VERSION.SDK_INT >=23 && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
+    public boolean file_permission() {
+        if (Build.VERSION.SDK_INT >= 23 && (ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED || ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.CAMERA}, 1);
             return false;
-        }else{
+        } else {
             return true;
         }
     }
-    private File create_image() throws IOException{
+
+
+    private File create_image() throws IOException {
         @SuppressLint("SimpleDateFormat") String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
-        String imageFileName = "img_"+timeStamp+"_";
+        String imageFileName = "img_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        return File.createTempFile(imageFileName,".jpg",storageDir);
+        return File.createTempFile(imageFileName, ".jpg", storageDir);
     }
 
     private File create_video() throws IOException {
         @SuppressLint("SimpleDateFormat")
-        String file_name    = new SimpleDateFormat("yyyy_mm_ss").format(new Date());
-        String new_name     = "file_"+file_name+"_";
-        File sd_directory   = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
+        String file_name = new SimpleDateFormat("yyyy_mm_ss").format(new Date());
+        String new_name = "file_" + file_name + "_";
+        File sd_directory = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
         return File.createTempFile(new_name, ".3gp", sd_directory);
     }
 
