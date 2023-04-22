@@ -259,7 +259,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onDownloadStart(String url, String userAgent, String contentDisposition, String mimeType, long contentLength) {
 
-                Uri parse = Uri.parse(url.trim());
+                Uri parse = Uri.parse(url);
                 DownloadManager.Request request = new DownloadManager.Request(parse);
                 request.setMimeType(mimeType);
                 String cookies = CookieManager.getInstance().getCookie(url);
