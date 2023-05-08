@@ -73,23 +73,23 @@ public class MainActivity extends AppCompatActivity {
         web = (WebView) findViewById(R.id.myweb);
         web.loadUrl(webUrl);
 
-        WebSettings mywebsettings = web.getSettings();
-        mywebsettings.setJavaScriptEnabled(true);
+//        WebSettings mywebsettings = web.getSettings();
+//        mywebsettings.setJavaScriptEnabled(true);
 
         web.setWebViewClient(new MyWebViewClient());
 
         //improve webview performance
-        web.getSettings().setLoadsImagesAutomatically(true);
-        web.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
-        web.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
-        web.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
-        web.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
-        mywebsettings.setDomStorageEnabled(true);
-        mywebsettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
-        mywebsettings.setUseWideViewPort(true);
-        mywebsettings.setSavePassword(true);
-        mywebsettings.setSaveFormData(true);
-        mywebsettings.setEnableSmoothTransition(true);
+//        web.getSettings().setLoadsImagesAutomatically(true);
+//        web.getSettings().setRenderPriority(WebSettings.RenderPriority.HIGH);
+//        web.getSettings().setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK);
+//        web.getSettings().setCacheMode(WebSettings.LOAD_DEFAULT);
+//        web.setScrollBarStyle(View.SCROLLBARS_INSIDE_OVERLAY);
+//        mywebsettings.setDomStorageEnabled(true);
+//        mywebsettings.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.NARROW_COLUMNS);
+//        mywebsettings.setUseWideViewPort(true);
+//        mywebsettings.setSavePassword(true);
+//        mywebsettings.setSaveFormData(true);
+//        mywebsettings.setEnableSmoothTransition(true);
 
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         web.setWebChromeClient(new WebChromeClient() {
